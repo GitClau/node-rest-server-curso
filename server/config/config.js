@@ -14,14 +14,14 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
 let urlDB;
 
-if (process.env.NODE_ENV === 'dev') {
-    urlDB = 'mongodb://localhost:27017/cafe'
-} else {
+// if (process.env.NODE_ENV === 'dev') {
+// urlDB = 'mongodb://localhost:27017/cafe'
+// } else {
 
 
-    urlDB = 'mongodb+srv://claudiu:cs123456@cluster0-qicgb.mongodb.net/cafe';
-    // urlDB = 'mongodb://claudiu:cs123456@cluster0-shard-00-01-qicgb.mongodb.net:27017';
+urlDB = 'mongodb+srv://claudiu:cs123456@cluster0-qicgb.mongodb.net/cafe';
+// urlDB = 'mongodb://claudiu:cs123456@cluster0-shard-00-01-qicgb.mongodb.net:27017';
 
 
-}
+// }
 process.env.URLDB = urlDB;
