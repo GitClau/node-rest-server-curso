@@ -19,8 +19,7 @@ let urlDB;
 // } else {
 
 
-urlDB = 'mongodb+srv://claudiu:cs123456@cluster0-qicgb.mongodb.net/cafe';
-// urlDB = 'mongodb://claudiu:cs123456@cluster0-shard-00-01-qicgb.mongodb.net:27017';
+urlDB = process.env.MONGO_URI;
 
 
 // }
