@@ -5,6 +5,8 @@ const _ = require('underscore');
 
 const Usuario = require('../models/usuario'); //se crea usuario como constante con U mayuscula para que no entre en conflicto con las otras variables de usuario
 
+const { verificarToken, verificaAdmin_Role } = require('../middlewares/autenticacion'); //dado que necesitamos de unos middlewares que están localizados en otra carpeta debemos importarlos aquí
+//los middlewares son verificarToken y verificaAdmin_Role
 
 const app = express();
 
@@ -14,8 +16,20 @@ app.get('/', function(req, res) {
     res.json('Hello World');
 });
 
-app.get('/usuario', function(req, res) {
+//si queremos usar middlewares debemos pasarlos como segundo argumento a nuestra funcion get post put o la que sea como en la siguiente que hemos tenido que
+//pasarselo debido a que hemos creado un login con tokens
+//también le pasamos el verificaAdmin_Role dentro del middleware de allí que tenga que ir entre corchetes dentro del app.get put post delete etc.
+
+app.get('/usuario', verificarToken, function(req, res) {
     // res.send('Hello World')// si la informacion a enviar es en formato json se usa directamente en vez de send ya que esto ultimo es html
+
+    // return res.json({
+
+    //     usuario: req.usuario,
+    //     nombre: req.usuario.nombre,
+    //     email: req.usuario.email
+
+    // }); //con esto filtramos solo lo que queremos ver en el objeto de respuesta para la parte del token y del admin role comentar este res json si se quiere usar lo de abajo
 
     let desde = req.query.desde || 0; //vamos a definir un inicio desde donde quiero que se hagan las páginas o desde que punto del objeto quiero traerme los valores
     // esta parte solo si se usa para paginacion
@@ -32,7 +46,7 @@ app.get('/usuario', function(req, res) {
         .limit(desde) //solo coge los 10 siguientes al salto como máximo. se puede jugar con skip y limit para coger diferentes parametros según interese por ejemplo podemos coger los 3 primeros unsado limit(3) y despues skip(3)
         .exec((err, usuarios) => {
             if (err) {
-                res.status(400).json({
+                return res.status(400).json({
                     ok: false,
                     err
                 });
@@ -40,7 +54,7 @@ app.get('/usuario', function(req, res) {
 
             // que pasaria si quisieramos contar el numero de registros
             Usuario.count({}, (err, conteo) => {
-                res.json({
+                return res.json({
                     ok: true,
                     usuarios: usuarios,
                     cuantos: conteo
@@ -62,7 +76,7 @@ app.get('/usuario', function(req, res) {
     //     .limit(desde) //solo coge los 10 siguientes al salto como máximo. se puede jugar con skip y limit para coger diferentes parametros según intere por ejemplo podemos coger los 3 primeros unsado limit(3) y despues skip(3)
     //     .exec((err, usuarios) => {
     //         if (err) {
-    //             res.status(400).json({
+    //            return res.status(400).json({
     //                 ok: false,
     //                 err
     //             });
@@ -70,14 +84,14 @@ app.get('/usuario', function(req, res) {
 
     //         // que pasaria si quisieramos contar el numero de registros
     //         Usuario.count({ google: true }, (err, conteo) => {
-    //             res.json({
+    //             return res.json({
     //                 ok: true,
     //                 usuarios: usuarios,
     //                 cuantos: conteo
     //             });
     //         });
 
-    //         // res.json({
+    //         // return res.json({
     //         //     ok: true,
     //         //     usuarios: usuarios
     //         // })
@@ -108,7 +122,7 @@ app.get('/usuario', function(req, res) {
 //         .limit(desde) //solo coge los 10 siguientes al salto como máximo. se puede jugar con skip y limit para coger diferentes parametros según interese por ejemplo podemos coger los 3 primeros unsado limit(3) y despues skip(3)
 //         .exec((err, usuarios) => {
 //             if (err) {
-//                 res.status(400).json({
+//                 return res.status(400).json({
 //                     ok: false,
 //                     err
 //                 });
@@ -116,7 +130,7 @@ app.get('/usuario', function(req, res) {
 
 //             // que pasaria si quisieramos contar el numero de registros
 //             Usuario.count({ estado: true }, (err, conteo) => {
-//                 res.json({
+//                 return res.json({
 //                     ok: true,
 //                     usuarios: usuarios,
 //                     cuantos: conteo
@@ -128,7 +142,7 @@ app.get('/usuario', function(req, res) {
 
 // });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificarToken, verificaAdmin_Role], function(req, res) {
     // // res.send('Hello World')// si la informacion a enviar es en formato json se usa directamente en vez de send ya que esto ultimo es html
     // let body = req.body //dado que se usa el body parser se crea ahora el body para mostrarlo por pantalla
 
@@ -154,7 +168,7 @@ app.post('/usuario', function(req, res) {
     usuario.save((err, usuarioDB) => {
 
         if (err) {
-            res.status(400).json({
+            return res.status(400).json({
                 ok: false,
                 err
             });
@@ -177,7 +191,7 @@ app.post('/usuario', function(req, res) {
     //         mensaje: 'me hace falta un nombre'
     //     });
     // } else {
-    //     res.json({
+    //    return res.json({
     //         persona: body
     //     }); //dado que hemos creado el body ahora lo podemos tambien mostrar
     // } si no se usa usuario desde base de datos descomentar este bloque
@@ -185,7 +199,7 @@ app.post('/usuario', function(req, res) {
 
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificarToken, verificaAdmin_Role], function(req, res) {
     // se le ha puesto : id para indicar en la url que queremos obtener el put contra la direccion de un usuario en concreto para ello hay que configurarle la variable id
 
     let id = req.params.id; // esto de req params id es una estructura dada req es nuestro parametro de entrada
@@ -210,7 +224,7 @@ app.put('/usuario/:id', function(req, res) {
     //aún así esto puede dar problemas con otros campos si se usa runValidators hay que usar underscore también para ello hacemos npm install underscore --save en cmd en la carpeta de proyecto
     Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
             if (err) {
-                res.status(400).json({
+                return res.status(400).json({
                     ok: false,
                     err
                 });
@@ -236,7 +250,7 @@ app.put('/usuario/:id', function(req, res) {
 });
 
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificarToken, verificaAdmin_Role], function(req, res) {
     // res.send('Hello World')// si la informacion a enviar es en formato json se usa directamente en vez de send ya que esto ultimo es html
 
     //el delete como tal para borar algo por completo no se usa. se usa para cambiar el valor del campo "estado" esto pemitirá poner a false estado y así seguimos guardando el objeto en la base de datos para algunas referencias o compras pendientes 
@@ -257,14 +271,14 @@ app.delete('/usuario/:id', function(req, res) {
 
 
         if (err) {
-            res.status(400).json({
+            return res.status(400).json({
                 ok: false,
                 err
             });
         };
 
         if (usuarioBorrado === null) {
-            res.status(400).json({
+            return res.status(400).json({
                 ok: false,
                 error: {
                     message: 'Usuario no encontrado'
