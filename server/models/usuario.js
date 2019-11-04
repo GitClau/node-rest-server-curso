@@ -5,7 +5,7 @@ let rolesValidos = {
     values: ['ADMIN_ROLE', 'USER_ROLE'],
     message: '{VALUE} no es un rol válido'
 }; //se crea el rol válido para tener en cuenta que roles quiero que se acepten y muestre el error del mensaje en caso de que sea uno que yo no quiero
-//esto se hace para role
+//esto se hace para role de los usuarios
 
 let Schema = mongoose.Schema;
 
