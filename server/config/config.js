@@ -45,3 +45,9 @@ if (process.env.NODE_ENV === 'dev') {
 
 }
 process.env.URLDB = urlDB;
+
+
+//definimos un client ID en heroku para conservarlo y que no sea publico y por eso lo declaramos aqui
+
+
+process.env.CLIENT_ID = process.env.CLIENT_ID || '699236419260-36tn16fq1cnsgm5mlg2css8merhagg4o.apps.googleusercontent.com';
