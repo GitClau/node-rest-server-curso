@@ -154,7 +154,7 @@ app.post('/usuario', [verificarToken, verificaAdmin_Role], function(req, res) {
 
 
     // res.send('Hello World')// si la informacion a enviar es en formato json se usa directamente en vez de send ya que esto ultimo es html
-    let body = req.body //dado que se usa el body parser se crea ahora el body para mostrarlo por pantalla
+    let body = req.body; //dado que se usa el body parser se crea ahora el body para mostrarlo por pantalla
 
 
     let usuario = new Usuario({

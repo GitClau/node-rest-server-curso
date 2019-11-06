@@ -20,4 +20,10 @@ const app = express();
 app.use(require('./usuario'));
 app.use(require('./login'));
 
+// para el ejercicio de la categoria hay que importar también la categoríaasí nos aseguramos que se arrastra a los siguientes archivos y que se pueden hacer las peticiones get post etc a la ruta especificada
+app.use(require('./categoria'));
+//
+app.use(require('./producto'));
+
+
 module.exports = app;
